@@ -23,7 +23,7 @@ jobs:
           push: true
           file: ./src/Dockerfile
           tags:        
-            edsonrsjr/fake-shop:v1
+            edsonrsjr/fake-shop:v15
             #edsonrsjr/fake-shop:v${{ github.run_number }}
   cd:
     runs-on: ubuntu-latest
@@ -52,5 +52,5 @@ jobs:
           manifests:
               ./k8s/deployment.yaml
           images:
-              edsonrsjr/fake-shop:v1
+              edsonrsjr/fake-shop:v15
               #edsonrsjr/fake-shop:v${{ github.run_number }}
