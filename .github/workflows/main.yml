@@ -1,5 +1,4 @@
-name: CI-CD
-
+name: CI-SCAN
 on:
   push:
     branches: ["main"]
@@ -24,31 +23,13 @@ jobs:
           file: ./src/Dockerfile
           tags:        
             edsonrsjr/fake-shop:latest, edsonrsjr/fake-shop:v${{ github.run_number }}
-  cd:
-    runs-on: ubuntu-latest
+  scan:
     needs: [ci]
-    permissions:
-      id-token: write
-      contents: read
-      actions: read    
     steps:
-      - name: Obter codigo
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Configurar o kubectl
-        run: aws eks update-kubeconfig --name EKS-Cluster
-
-      - name: Aplicar os manifestos no Kubernetes
-        uses: Azure/k8s-deploy@v5
-        with:
-          manifests:
-              ./k8s/deployment.yaml
-          images:
-              edsonrsjr/fake-shop:v${{ github.run_number }}
+    - uses: actions/checkout@v3
+    - name: Scan container image with Tenable Cloud Security
+      uses: tenable/cloud-security-actions/container-image/scan@v1
+      with:
+        api-token: ${{ secrets.TENABLE_API_TOKEN }}
+        api-url: https://us.app.ermetic.com
+        name: edsonrsjr/fake-shop:v${{ github.run_number }}
