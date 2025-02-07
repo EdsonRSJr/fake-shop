@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: alpine-latest
     steps:
       - name: Obter codigo
         uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
           tags:        
             edsonrsjr/fake-shop:latest, edsonrsjr/fake-shop:v${{ github.run_number }}
   scan:
-    runs-on: ubuntu-latest
+    runs-on: alpine-latest
     needs: [ci]
     steps:
     - uses: actions/checkout@v3
@@ -34,3 +34,4 @@ jobs:
         api-token: ${{ secrets.TENABLE_API_TOKEN }}
         api-url: https://us.app.ermetic.com
         name: edsonrsjr/fake-shop:v${{ github.run_number }}
+        fail-on-min-severity: high
